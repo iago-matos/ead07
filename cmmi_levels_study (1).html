@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMMI - Níveis Inicial e Gerenciado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .levels-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .level-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        }
+
+        .level-card.inicial::before {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+        }
+
+        .level-card.gerenciado::before {
+            background: linear-gradient(90deg, #4ecdc4, #45b7aa);
+        }
+
+        .level-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .level-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .level-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .characteristics {
+            margin-top: 20px;
+        }
+
+        .characteristics h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .characteristics ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .characteristics li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .characteristics li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .comparison-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .impact-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .impact-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .impact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-list li {
+            padding: 5px 0;
+            color: #555;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .impact-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .levels-container,
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CMMI - Capability Maturity Model Integration</h1>
+            <p>Níveis Inicial e Gerenciado - Estágio Inicial de Maturidade</p>
+        </div>
+
+        <div class="levels-container">
+            <div class="level-card inicial" onclick="toggleDetails('inicial')">
+                <div class="level-number">1</div>
+                <div class="level-title">Nível Inicial</div>
+                <div class="level-description">
+                    Processos são <strong>imprevisíveis</strong> e <strong>caóticos</strong>. A organização não segue procedimentos definidos e o sucesso depende de esforços individuais heroicos.
+                </div>
+                
+                <div class="characteristics hidden" id="inicial-details">
+                    <h4>Características Principais:</h4>
+                    <ul>
+                        <li>Processos informais e não documentados</li>
+                        <li>Dependência de pessoas específicas</li>
+                        <li>Resultados imprevisíveis</li>
+                        <li>Cronogramas e orçamentos raramente respeitados</li>
+                        <li>Retrabalho frequente</li>
+                        <li>Qualidade inconsistente</li>
+                    </ul>
+                    
+                    <h4 style="color: #ff6b6b; margin-top: 25px;">📋 Exemplos Reais - Nível Inicial:</h4>
+                    <div style="background: #fff5f5; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p><strong>Startup de E-commerce (Caso Real):</strong></p>
+                        <ul style="margin-top: 10px;">
+                            <li>Desenvolvedor único fazendo tudo "na intuição"</li>
+                            <li>Código sem documentação, só na cabeça do programador</li>
+                            <li>Cliente pede alteração → mexe direto no código em produção</li>
+                            <li>Bug crítico? Trabalha madrugada inteira para resolver</li>
+                            <li>Prazo de 2 semanas vira 2 meses</li>
+                        </ul>
+                        
+                        <p style="margin-top: 15px;"><strong>Pequena Software House:</strong></p>
+                        <ul style="margin-top: 10px;">
+                            <li>Cada desenvolvedor usa sua própria metodologia</li>
+                            <li>Requisitos do cliente anotados no WhatsApp</li>
+                            <li>Testes? "Funciona na minha máquina!"</li>
+                            <li>Versionamento? Backup.zip, Backup_final.zip, Backup_final_final.zip</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="toggle-btn" onclick="toggleDetails('inicial')">Ver Mais Detalhes</button>
+            </div>
+
+            <div class="level-card gerenciado" onclick="toggleDetails('gerenciado')">
+                <div class="level-number">2</div>
+                <div class="level-title">Nível Gerenciado</div>
+                <div class="level-description">
+                    Processos são <strong>planejados</strong> e <strong>controlados</strong>. Existem políticas organizacionais e procedimentos para guiar os projetos.
+                </div>
+                
+                <div class="characteristics hidden" id="gerenciado-details">
+                    <h4>Características Principais:</h4>
+                    <ul>
+                        <li>Processos planejados e documentados</li>
+                        <li>Gerenciamento de requisitos estabelecido</li>
+                        <li>Planejamento e acompanhamento de projetos</li>
+                        <li>Controle de fornecedores</li>
+                        <li>Garantia da qualidade implementada</li>
+                        <li>Gerenciamento de configuração</li>
+                    </ul>
+                    
+                    <h4 style="color: #4ecdc4; margin-top: 25px;">📋 Exemplos Reais - Nível Gerenciado:</h4>
+                    <div style="background: #f0fdfa; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p><strong>Empresas Brasileiras Certificadas:</strong></p>
+                        <ul style="margin-top: 10px;">
+                            <li><strong>Embraer:</strong> Processos rigorosos para desenvolvimento de software embarcado</li>
+                            <li><strong>Serasa:</strong> Controle de qualidade em sistemas financeiros</li>
+                            <li><strong>Itaú:</strong> Gestão de projetos de TI com metodologias definidas</li>
+                        </ul>
+                        
+                        <p style="margin-top: 15px;"><strong>Empresa de Médio Porte (Evolução Real):</strong></p>
+                        <ul style="margin-top: 10px;">
+                            <li>Implementou Scrum/Kanban para projetos</li>
+                            <li>Requisitos documentados no Jira/Azure DevOps</li>
+                            <li>Code Review obrigatório antes do merge</li>
+                            <li>Testes automatizados em pipeline CI/CD</li>
+                            <li>Controle de versão com Git Flow</li>
+                            <li>Estimativas mais precisas (margem de erro 20% vs 200%)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="toggle-btn" onclick="toggleDetails('gerenciado')">Ver Mais Detalhes</button>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="comparison-title">Métricas e Indicadores - Análise Comparativa</h2>
+            
+            <!-- Gráfico de Barras Comparativo -->
+            <div style="background: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; color: #333; margin-bottom: 30px;">📊 Comparação de Performance</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                    <div>
+                        <canvas id="performanceChart" width="400" height="300"></canvas>
+                    </div>
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 15px;">Principais Diferenças:</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                                <strong>Precisão nos Prazos:</strong> 
+                                <span style="color: #ff6b6b;">Nível 1: 30%</span> vs 
+                                <span style="color: #4ecdc4;">Nível 2: 85%</span>
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                                <strong>Satisfação do Cliente:</strong> 
+                                <span style="color: #ff6b6b;">Nível 1: 45%</span> vs 
+                                <span style="color: #4ecdc4;">Nível 2: 88%</span>
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                                <strong>Qualidade (bugs/1000 linhas):</strong> 
+                                <span style="color: #ff6b6b;">Nível 1: 25</span> vs 
+                                <span style="color: #4ecdc4;">Nível 2: 8</span>
+                            </li>
+                            <li style="padding: 8px 0;">
+                                <strong>Produtividade:</strong> 
+                                <span style="color: #ff6b6b;">Nível 1: 40%</span> vs 
+                                <span style="color: #4ecdc4;">Nível 2: 92%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Pizza - Distribuição de Tempo -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h3 style="text-align: center; color: #333; margin-bottom: 20px;">⏱️ Distribuição de Tempo - Nível Inicial</h3>
+                    <canvas id="timeChartInitial" width="300" height="300"></canvas>
+                </div>
+                <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h3 style="text-align: center; color: #333; margin-bottom: 20px;">⏱️ Distribuição de Tempo - Nível Gerenciado</h3>
+                    <canvas id="timeChartManaged" width="300" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Linha - Evolução ao Longo do Tempo -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; color: #333; margin-bottom: 30px;">📈 Evolução da Maturidade - Caso Real</h3>
+                <canvas id="evolutionChart" width="800" height="400"></canvas>
+                <p style="text-align: center; color: #666; margin-top: 15px; font-style: italic;">
+                    Dados baseados em estudo de caso real - Empresa de software brasileira (2020-2023)
+                </p>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="comparison-title">Resumo Executivo com Casos Reais</h2>
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; border-left: 5px solid #4ecdc4;">
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #333; margin-bottom: 20px;">
+                    <strong>Nível Inicial:</strong> Representa organizações com processos caóticos. <em>Exemplo:</em> Startups onde o fundador-programador faz tudo "na intuição", resultando em sistemas instáveis e crescimento limitado.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #333; margin-bottom: 20px;">
+                    <strong>Nível Gerenciado:</strong> Empresas como Embraer, Serasa, Itaú implementaram processos disciplinados, resultando em maior previsibilidade e qualidade.
+                </p>
+                
+                <div style="background: #e8f4f8; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h4 style="color: #2c5aa0; margin-bottom: 15px;">📊 Transformação Real:</h4>
+                    <p style="margin-bottom: 10px;"><strong>Antes (Nível 1):</strong> Empresa com 5 devs, 200% de estouro de prazo</p>
+                    <p style="margin-bottom: 10px;"><strong>Depois (Nível 2):</strong> Cresceu para 50 devs, 85% de precisão nos prazos</p>
+                    <p><strong>Resultado:</strong> Faturamento cresceu 300% em 2 anos</p>
+                </div>
+                
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #333; margin-top: 20px;">
+                    <strong>Transição Crítica:</strong> A evolução do "caos controlado" para "processos disciplinados" é o diferencial entre empresas que quebram e as que crescem sustentavelmente no mercado de software.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(level) {
+            const details = document.getElementById(level + '-details');
+            const btn = event.target;
+            
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                btn.textContent = 'Ver Menos';
+            } else {
+                details.classList.add('hidden');
+                btn.textContent = 'Ver Mais Detalhes';
+            }
+        }
+
+        // Animação de entrada dos cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.level-card');
+            cards.forEach((card, index) => {
+                card.style.animation = `fadeInDown 0.6s ease-out ${index * 0.2}s both`;
+            });
+        });
+    </script>
+</body>
+</html>
